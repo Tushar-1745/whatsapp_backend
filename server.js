@@ -4,21 +4,24 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 
+// Load env vars
 dotenv.config();
+
+// Connect to DB
 connectDB();
 
 const app = express();
 
 // Allowed origins for CORS
 const allowedOrigins = [
-  "https://whatsapp-frontend-smoky.vercel.app", // Vercel production URL
+  "https://whatsapp-frontend-smoky.vercel.app", // Production (Vercel)
   "http://localhost:3000" // Local dev
 ];
 
 // CORS middleware
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
+    // Allow requests with no origin (mobile apps, Postman, curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -30,19 +33,19 @@ app.use(cors({
   credentials: true
 }));
 
-// Handle preflight requests
+// Handle preflight requests globally
 app.options("*", cors({
   origin: allowedOrigins,
   credentials: true
 }));
 
-// Middleware
+// JSON parser
 app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
 
-// Health check route
+// Health check
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
